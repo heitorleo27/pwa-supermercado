@@ -1,0 +1,49 @@
+.store-selection-container {
+  padding: 2rem;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.lojas-lista {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 1rem;
+}
+
+.lojas-lista li {
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.lojas-lista li:hover {
+  background-color: #f0f0f0;
+}
+
+.criar-loja-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.criar-loja-form input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.criar-loja-form button {
+  padding: 0.75rem;
+  background-color: #2196F3;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.criar-loja-form button:hover {
+  background-color: #1976d2;
+}
