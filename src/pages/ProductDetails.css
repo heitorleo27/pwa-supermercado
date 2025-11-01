@@ -1,0 +1,154 @@
+/* ProductDetails.css */
+.product-details {
+  padding: 16px;
+  max-width: 900px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  color: #007bff;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.top-actions .btn {
+  margin-left: 8px;
+}
+
+/* card */
+.details-card {
+  display: flex;
+  gap: 16px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+.photo-col {
+  width: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-photo {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.info-col {
+  flex: 1;
+}
+
+.product-title {
+  margin: 0 0 8px 0;
+  font-size: 1.25rem;
+}
+
+.meta {
+  margin: 4px 0;
+  color: #444;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 12px 0;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.status .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* colors */
+.status.green { background: #28a745; }
+.status.yellow { background: #ffc107; color: #222; }
+.status.red { background: #dc3545; }
+
+.quantity {
+  font-size: 1rem;
+  color: #333;
+}
+
+.validade {
+  margin-top: 6px;
+  color: #333;
+}
+
+.notes {
+  margin-top: 12px;
+  border-top: 1px dashed #eee;
+  padding-top: 10px;
+}
+
+.actions {
+  margin-top: 16px;
+}
+
+.btn {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn.edit { background: #007bff; color: #fff; }
+.btn.delete { background: #dc3545; color: #fff; }
+
+.btn.mark-expired { background: #6c757d; color: #fff; }
+
+/* confirm modal */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.4);
+  z-index: 9999;
+}
+
+.confirm-box {
+  background: #fff;
+  padding: 18px;
+  border-radius: 8px;
+  max-width: 420px;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.btn.cancel { background: #f0f0f0; }
+.btn.confirm { background: #dc3545; color: #fff; }
