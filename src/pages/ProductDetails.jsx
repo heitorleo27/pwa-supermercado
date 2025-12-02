@@ -1,92 +1,165 @@
-import React, { useState } from 'react';
-import './ProductDetails.css';
+import { useState, useEffect } from 'react';
+import { FaTrash, FaEdit, FaArrowLeft, FaExclamationTriangle } from 'react-icons/fa';
 
-/**
- * Props:
- * - product: objeto com os campos do modelo (productId, nameFull, barcode, quantity, expiryDate, locationType, locationDesc, photos (array), notes, storeId)
- * - onBack(): função para voltar à lista
- * - onEdit(product): abrir edição (pode reutilizar AddProductDetails com dados)
- * - onDelete(productId): função para excluir (deve confirmar antes)
- * - onMarkExpired(productId): marca como vencido (incrementa estatística local)
- */
 export default function ProductDetails({ product, onBack, onEdit, onDelete, onMarkExpired }) {
-  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [formMode, setFormMode] = useState(false);
+  const [edited, setEdited] = useState(null);
+
+  useEffect(() => {
+    if (product) {
+      setEdited({
+        productId: product.productId,
+        name: product.name || "",
+        barcode: product.barcode || "",
+        quantity: product.quantity || "",
+        shelf: product.shelf || "",
+        expirationDate: product.expirationDate || "",
+        photo: product.photo || null,
+      });
+    }
+  }, [product]);
 
   if (!product) {
     return (
-      <div className="product-details empty">
-        <p>Produto não encontrado.</p>
-        <button onClick={onBack} className="btn">Voltar</button>
+      <div className="product-details-container">
+        <button className="back-btn" onClick={onBack}>
+          <FaArrowLeft /> Voltar
+        </button>
+        <p className="warning-text">
+          Produto não encontrado. Talvez a página tenha sido recarregada.
+        </p>
       </div>
     );
   }
 
-  const today = new Date();
-  const expiry = new Date(product.expiryDate);
-  const msPerDay = 1000 * 60 * 60 * 24;
-  const daysRemaining = Math.floor((expiry - today) / msPerDay);
+  const handleSaveEdit = () => {
+    onEdit({ ...edited });
+    setFormMode(false);
+  };
 
-  const status = (() => {
-    if (daysRemaining > 21) return 'green';
-    if (daysRemaining >= 11) return 'yellow';
-    return 'red';
-  })();
+  const handleDelete = () => {
+    const confirmation = window.confirm("Deseja realmente excluir este produto?");
+    if (confirmation) onDelete(product.productId);
+  };
 
-  const primaryPhoto = (product.photos && product.photos.length > 0 && product.photos[0].blobUrl) ? product.photos[0].blobUrl : '/placeholder.png';
+  const handleMarkExpiredClick = () => {
+    const confirmation = window.confirm("Marcar como vencido?");
+    if (confirmation) onMarkExpired(product.productId);
+  };
+
+  const handleInput = (e) => {
+    const { name, value } = e.target;
+    setEdited(prev => ({ ...prev, [name]: value }));
+  };
 
   return (
-    <div className="product-details">
-      <div className="topbar">
-        <button className="back-btn" onClick={onBack}>← Voltar</button>
-        <div className="top-actions">
-          <button className="btn edit" onClick={() => onEdit && onEdit(product)}>Editar</button>
-          <button className="btn delete" onClick={() => setConfirmDelete(true)}>Excluir</button>
-        </div>
+    <div className="product-details-container">
+
+      {/* Botão Voltar */}
+      <button className="back-btn" onClick={onBack}>
+        <FaArrowLeft /> Voltar
+      </button>
+
+      <h2 className="section-title">Detalhes do Produto</h2>
+
+      {/* Foto */}
+      <div className="photo-wrapper">
+        {product.photo ? (
+          <img src={product.photo} alt="Foto do produto" className="product-photo" />
+        ) : (
+          <div className="no-photo">Sem foto</div>
+        )}
       </div>
 
-      <div className="details-card">
-        <div className="photo-col">
-          <img src={primaryPhoto} alt={product.nameFull} className="product-photo" />
+      {/* Se estamos editando: */}
+      {formMode && edited && (
+        <div className="edit-form">
+
+          <label className="form-label">Nome</label>
+          <input
+            type="text"
+            name="name"
+            className="form-input"
+            value={edited.name}
+            onChange={handleInput}
+          />
+
+          <label className="form-label">Código de Barras</label>
+          <input
+            type="text"
+            name="barcode"
+            className="form-input"
+            value={edited.barcode}
+            onChange={handleInput}
+          />
+
+          <label className="form-label">Quantidade</label>
+          <input
+            type="number"
+            name="quantity"
+            className="form-input"
+            value={edited.quantity}
+            onChange={handleInput}
+          />
+
+          <label className="form-label">Prateleira / Corredor</label>
+          <input
+            type="text"
+            name="shelf"
+            className="form-input"
+            value={edited.shelf}
+            onChange={handleInput}
+          />
+
+          <label className="form-label">Validade</label>
+          <input
+            type="date"
+            name="expirationDate"
+            className="form-input"
+            value={edited.expirationDate}
+            onChange={handleInput}
+          />
+
+          <button className="save-btn" onClick={handleSaveEdit}>Salvar Alterações</button>
+          <button className="cancel-btn" onClick={() => setFormMode(false)}>Cancelar</button>
         </div>
+      )}
 
-        <div className="info-col">
-          <h2 className="product-title">{product.nameFull}</h2>
-          <p className="meta"><strong>Código:</strong> {product.barcode || 'Sem código'}</p>
-          <p className="meta"><strong>Loja:</strong> {product.storeName || product.storeId}</p>
-          <p className="meta"><strong>Local:</strong> {product.locationType === 'OUTRO' ? product.locationDesc : product.locationType}</p>
+      {/* Se NÃO estamos editando */}
+      {!formMode && (
+        <div className="info-panel">
+          <p><strong>Nome:</strong> {product.name}</p>
+          <p><strong>Código de Barras:</strong> {product.barcode}</p>
+          <p><strong>Quantidade:</strong> {product.quantity}</p>
+          <p><strong>Prateleira:</strong> {product.shelf}</p>
 
-          <div className="row">
-            <div className={`status ${status}`}>
-              <span className="dot" /> {daysRemaining} dias
-            </div>
-            <div className="quantity">Qtd: <strong>{product.quantity}</strong></div>
-          </div>
+          <p>
+            <strong>Validade:</strong>{" "}
+            {product.expirationDate || "—"}
+          </p>
 
-          <p className="validade"><strong>Validade:</strong> {product.expiryDate}</p>
-
-          {product.notes && (
-            <div className="notes">
-              <h4>Observações</h4>
-              <p>{product.notes}</p>
-            </div>
+          {product.isMarkedExpired && (
+            <p className="expired-flag">
+              <FaExclamationTriangle /> Produto marcado como vencido
+            </p>
           )}
 
-          <div className="actions">
-            <button className="btn mark-expired" onClick={() => onMarkExpired && onMarkExpired(product.productId)}>
-              Marcar como vencido
-            </button>
-          </div>
-        </div>
-      </div>
+          <div className="action-buttons">
 
-      {confirmDelete && (
-        <div className="confirm-overlay">
-          <div className="confirm-box">
-            <p>Tem certeza que deseja excluir este produto? Esta ação é irreversível.</p>
-            <div className="confirm-actions">
-              <button className="btn cancel" onClick={() => setConfirmDelete(false)}>Cancelar</button>
-              <button className="btn confirm" onClick={() => { setConfirmDelete(false); onDelete && onDelete(product.productId); }}>Excluir</button>
-            </div>
+            <button className="edit-btn" onClick={() => setFormMode(true)}>
+              <FaEdit /> Editar
+            </button>
+
+            {!product.isMarkedExpired && (
+              <button className="expired-btn" onClick={handleMarkExpiredClick}>
+                <FaExclamationTriangle /> Marcar Vencido
+              </button>
+            )}
+
+            <button className="delete-btn" onClick={handleDelete}>
+              <FaTrash /> Excluir
+            </button>
+
           </div>
         </div>
       )}
