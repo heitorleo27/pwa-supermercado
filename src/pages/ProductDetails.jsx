@@ -1,19 +1,40 @@
-import { useState, useEffect } from 'react';
-import { FaTrash, FaEdit, FaArrowLeft, FaExclamationTriangle } from 'react-icons/fa';
+import { useEffect, useState } from 'react';
+import { FaArrowLeft, FaEdit, FaTrash } from 'react-icons/fa';
+import './ProductDetails.css';
 
-export default function ProductDetails({ product, onBack, onEdit, onDelete, onMarkExpired }) {
-  const [formMode, setFormMode] = useState(false);
+export default function ProductDetails({ product, onBack, onEdit, onDelete }) {
+  const [isEditing, setIsEditing] = useState(false);
   const [edited, setEdited] = useState(null);
 
+  // UTIL: dias até vencer
+  const getDaysRemaining = (expiry) => {
+    if (!expiry) return Infinity;
+    const today = new Date();
+    const target = new Date(expiry);
+    return Math.floor((target - today) / (1000 * 60 * 60 * 24));
+  };
+
+  const daysRemaining = getDaysRemaining(product?.expiryDate);
+
+  // COR DO STATUS
+  const getStatusColor = (days) => {
+    if (days > 21) return 'green';
+    if (days >= 11) return 'yellow';
+    return 'red'; // inclui vencido
+  };
+
+  const statusColor = getStatusColor(daysRemaining);
+
+  // Carrega dados atuais no formulário
   useEffect(() => {
     if (product) {
       setEdited({
         productId: product.productId,
         name: product.name || "",
         barcode: product.barcode || "",
-        quantity: product.quantity || "",
+        quantity: product.quantity || 1,
         shelf: product.shelf || "",
-        expirationDate: product.expirationDate || "",
+        expiryDate: product.expiryDate || "",
         photo: product.photo || null,
       });
     }
@@ -25,44 +46,39 @@ export default function ProductDetails({ product, onBack, onEdit, onDelete, onMa
         <button className="back-btn" onClick={onBack}>
           <FaArrowLeft /> Voltar
         </button>
-        <p className="warning-text">
-          Produto não encontrado. Talvez a página tenha sido recarregada.
-        </p>
+        <p>Produto não encontrado.</p>
       </div>
     );
   }
 
-  const handleSaveEdit = () => {
+  // Salvar edição
+  const handleSave = () => {
     onEdit({ ...edited });
-    setFormMode(false);
+    setIsEditing(false);
   };
 
+  // Exclusão
   const handleDelete = () => {
-    const confirmation = window.confirm("Deseja realmente excluir este produto?");
-    if (confirmation) onDelete(product.productId);
-  };
-
-  const handleMarkExpiredClick = () => {
-    const confirmation = window.confirm("Marcar como vencido?");
-    if (confirmation) onMarkExpired(product.productId);
+    const ok = window.confirm("Deseja realmente excluir este produto?");
+    if (ok) onDelete(product.productId);
   };
 
   const handleInput = (e) => {
     const { name, value } = e.target;
-    setEdited(prev => ({ ...prev, [name]: value }));
+    setEdited((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
     <div className="product-details-container">
 
-      {/* Botão Voltar */}
+      {/* VOLTAR */}
       <button className="back-btn" onClick={onBack}>
         <FaArrowLeft /> Voltar
       </button>
 
       <h2 className="section-title">Detalhes do Produto</h2>
 
-      {/* Foto */}
+      {/* FOTO */}
       <div className="photo-wrapper">
         {product.photo ? (
           <img src={product.photo} alt="Foto do produto" className="product-photo" />
@@ -71,16 +87,16 @@ export default function ProductDetails({ product, onBack, onEdit, onDelete, onMa
         )}
       </div>
 
-      {/* Se estamos editando: */}
-      {formMode && edited && (
+      {/* FORMULÁRIO DE EDIÇÃO */}
+      {isEditing && edited && (
         <div className="edit-form">
 
           <label className="form-label">Nome</label>
           <input
             type="text"
             name="name"
-            className="form-input"
             value={edited.name}
+            className="form-input"
             onChange={handleInput}
           />
 
@@ -88,8 +104,8 @@ export default function ProductDetails({ product, onBack, onEdit, onDelete, onMa
           <input
             type="text"
             name="barcode"
-            className="form-input"
             value={edited.barcode}
+            className="form-input"
             onChange={handleInput}
           />
 
@@ -97,8 +113,9 @@ export default function ProductDetails({ product, onBack, onEdit, onDelete, onMa
           <input
             type="number"
             name="quantity"
-            className="form-input"
+            min="1"
             value={edited.quantity}
+            className="form-input"
             onChange={handleInput}
           />
 
@@ -106,61 +123,56 @@ export default function ProductDetails({ product, onBack, onEdit, onDelete, onMa
           <input
             type="text"
             name="shelf"
-            className="form-input"
             value={edited.shelf}
+            className="form-input"
             onChange={handleInput}
           />
 
           <label className="form-label">Validade</label>
           <input
             type="date"
-            name="expirationDate"
+            name="expiryDate"
+            value={edited.expiryDate}
             className="form-input"
-            value={edited.expirationDate}
             onChange={handleInput}
           />
 
-          <button className="save-btn" onClick={handleSaveEdit}>Salvar Alterações</button>
-          <button className="cancel-btn" onClick={() => setFormMode(false)}>Cancelar</button>
+          <button className="save-btn" onClick={handleSave}>Salvar</button>
+          <button className="cancel-btn" onClick={() => setIsEditing(false)}>Cancelar</button>
         </div>
       )}
 
-      {/* Se NÃO estamos editando */}
-      {!formMode && (
+      {/* VISUALIZAÇÃO */}
+      {!isEditing && (
         <div className="info-panel">
+
           <p><strong>Nome:</strong> {product.name}</p>
-          <p><strong>Código de Barras:</strong> {product.barcode}</p>
+          <p><strong>Código de Barras:</strong> {product.barcode || "—"}</p>
           <p><strong>Quantidade:</strong> {product.quantity}</p>
-          <p><strong>Prateleira:</strong> {product.shelf}</p>
+          <p><strong>Prateleira:</strong> {product.shelf || "—"}</p>
 
           <p>
-            <strong>Validade:</strong>{" "}
-            {product.expirationDate || "—"}
+            <strong>Validade:</strong> {product.expiryDate || "—"}{" "}
+            <span className={`days-badge ${statusColor}`}>
+              {Number.isFinite(daysRemaining)
+                ? daysRemaining >= 0
+                  ? `(${daysRemaining} dias)`
+                  : `(Vencido há ${Math.abs(daysRemaining)} dias)`
+                : ""}
+            </span>
           </p>
 
-          {product.isMarkedExpired && (
-            <p className="expired-flag">
-              <FaExclamationTriangle /> Produto marcado como vencido
-            </p>
-          )}
-
+          {/* BOTÕES */}
           <div className="action-buttons">
-
-            <button className="edit-btn" onClick={() => setFormMode(true)}>
+            <button className="edit-btn" onClick={() => setIsEditing(true)}>
               <FaEdit /> Editar
             </button>
-
-            {!product.isMarkedExpired && (
-              <button className="expired-btn" onClick={handleMarkExpiredClick}>
-                <FaExclamationTriangle /> Marcar Vencido
-              </button>
-            )}
 
             <button className="delete-btn" onClick={handleDelete}>
               <FaTrash /> Excluir
             </button>
-
           </div>
+
         </div>
       )}
     </div>

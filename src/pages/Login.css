@@ -1,64 +1,105 @@
+/* CONTAINER GERAL */
 .login-container {
+  min-height: 100vh;
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
   padding: 2rem;
-  max-width: 400px;
-  margin: 0 auto;
+  background: #f7f7f7;
 }
 
-.login-form {
+/* CARD */
+.login-card {
+  background: white;
+  width: 100%;
+  max-width: 380px;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
   display: flex;
   flex-direction: column;
-  width: 100%;
+  gap: 1.2rem;
 }
 
-.login-form label {
-  margin-bottom: 1rem;
-  font-weight: 500;
+/* TÍTULO */
+.login-title {
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 0.5rem;
 }
 
-.login-form input {
-  width: 100%;
-  padding: 0.5rem;
-  margin-top: 0.25rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+/* CAMPOS */
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
 }
 
-.btn-login {
-  padding: 0.75rem;
-  background-color: #2196F3;
+.login-field label {
+  font-size: 0.95rem;
+  color: #444;
+}
+
+.login-field input {
+  padding: 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #dcdcdc;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.login-field input:focus {
+  border-color: #3A7AFE;
+}
+
+/* BOTÃO */
+.login-button {
+  background: #3A7AFE;
   color: white;
-  font-weight: bold;
   border: none;
-  border-radius: 4px;
+  padding: 0.9rem;
+  font-size: 1rem;
+  border-radius: 8px;
   cursor: pointer;
-  margin-top: 1rem;
+  transition: 0.2s;
 }
 
-.btn-login:hover {
-  background-color: #1976d2;
+.login-button:hover {
+  background: #2e63d4;
 }
 
-.erro {
-  color: red;
-  font-size: 0.9rem;
-  margin-top: -0.5rem;
-  margin-bottom: 1rem;
+/* LINK DE CADASTRO */
+.login-register {
+  text-align: center;
+  margin-top: 0.5rem;
 }
 
-.cadastro-link {
-  margin-top: 1rem;
-  font-size: 0.9rem;
+.login-register a {
+  color: #3A7AFE;
+  text-decoration: none;
+  font-size: 0.95rem;
 }
 
-.cadastro-link span {
-  color: #2196F3;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.cadastro-link span:hover {
+.login-register a:hover {
   text-decoration: underline;
+}
+
+/* ERRO */
+.login-error {
+  background: #ffefef;
+  color: #c62828;
+  border-left: 4px solid #c62828;
+  padding: 0.7rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+/* MOBILE */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 1.5rem;
+  }
 }

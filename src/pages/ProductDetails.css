@@ -1,154 +1,213 @@
-/* ProductDetails.css */
-.product-details {
-  padding: 16px;
-  max-width: 900px;
+/* CONTAINER PRINCIPAL */
+.product-details-container {
+  width: 100%;
+  max-width: 520px;
   margin: 0 auto;
-  font-family: Arial, sans-serif;
-}
-
-.topbar {
+  padding: 1.8rem 1.3rem;
+  background: #f5f5f5;
+  min-height: 100vh;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
+  flex-direction: column;
 }
 
+/* BOTÃO VOLTAR */
 .back-btn {
-  background: none;
-  border: none;
-  color: #007bff;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-.top-actions .btn {
-  margin-left: 8px;
-}
-
-/* card */
-.details-card {
-  display: flex;
-  gap: 16px;
-  background: #fff;
-  border-radius: 10px;
-  padding: 16px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-}
-
-.photo-col {
-  width: 220px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  gap: 0.4rem;
+  background: transparent;
+  color: #3A7AFE;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+.back-btn:hover {
+  text-decoration: underline;
+}
+
+/* TÍTULO */
+.section-title {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #222;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+/* FOTO */
+.photo-wrapper {
+  width: 100%;
+  display: flex;
   justify-content: center;
+  margin-bottom: 1.5rem;
 }
 
 .product-photo {
-  width: 200px;
-  height: 200px;
+  width: 180px;
+  height: 180px;
+  border-radius: 12px;
   object-fit: cover;
-  border-radius: 8px;
-  border: 1px solid #eee;
+  background: #ddd;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
 }
 
-.info-col {
-  flex: 1;
-}
-
-.product-title {
-  margin: 0 0 8px 0;
-  font-size: 1.25rem;
-}
-
-.meta {
-  margin: 4px 0;
-  color: #444;
-}
-
-.row {
+.no-photo {
+  width: 180px;
+  height: 180px;
+  border-radius: 12px;
+  background: #d6d6d6;
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin: 12px 0;
+  justify-content: center;
+  color: #555;
+  font-size: 1rem;
 }
 
-.status {
+/* PAINEL DE INFORMAÇÕES */
+.info-panel {
+  background: white;
+  padding: 1.4rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
   display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 10px;
-  border-radius: 20px;
-  font-weight: bold;
-  color: #fff;
+  flex-direction: column;
+  gap: 0.7rem;
 }
 
-.status .dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  display: inline-block;
-}
-
-/* colors */
-.status.green { background: #28a745; }
-.status.yellow { background: #ffc107; color: #222; }
-.status.red { background: #dc3545; }
-
-.quantity {
+.info-panel p {
   font-size: 1rem;
   color: #333;
 }
 
-.validade {
-  margin-top: 6px;
-  color: #333;
+/* FLAG VENCIDO */
+.expired-flag {
+  margin-top: 0.5rem;
+  background: #ffe5e5;
+  color: #b60000;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.notes {
-  margin-top: 12px;
-  border-top: 1px dashed #eee;
-  padding-top: 10px;
+/* BOTÕES DE AÇÃO */
+.action-buttons {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
-.actions {
-  margin-top: 16px;
+.action-buttons button {
+  padding: 0.9rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s;
 }
 
-.btn {
-  padding: 8px 12px;
-  border-radius: 6px;
+/* EDITAR */
+.edit-btn {
+  background: #3A7AFE;
+  color: white;
+}
+
+.edit-btn:hover {
+  opacity: 0.85;
+}
+
+/* MARCAR VENCIDO */
+.expired-btn {
+  background: #FFB200;
+  color: #222;
+}
+
+.expired-btn:hover {
+  opacity: 0.85;
+}
+
+/* DELETAR */
+.delete-btn {
+  background: #e74c3c;
+  color: white;
+}
+
+.delete-btn:hover {
+  opacity: 0.85;
+}
+
+/* FORM DE EDIÇÃO */
+.edit-form {
+  background: white;
+  padding: 1.4rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-label {
+  font-size: 0.95rem;
+  color: #444;
+  margin-bottom: -0.4rem;
+}
+
+.form-input {
+  padding: 0.9rem;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+}
+
+.form-input:focus {
+  border-color: #3A7AFE;
+}
+
+/* BOTÕES DO FORM */
+.save-btn {
+  background: #3A7AFE;
+  color: white;
+  padding: 0.9rem;
+  border-radius: 8px;
   border: none;
   cursor: pointer;
 }
 
-.btn.edit { background: #007bff; color: #fff; }
-.btn.delete { background: #dc3545; color: #fff; }
-
-.btn.mark-expired { background: #6c757d; color: #fff; }
-
-/* confirm modal */
-.confirm-overlay {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0,0,0,0.4);
-  z-index: 9999;
+.save-btn:hover {
+  opacity: 0.85;
 }
 
-.confirm-box {
-  background: #fff;
-  padding: 18px;
+.cancel-btn {
+  background: #ddd;
+  color: #222;
+  padding: 0.9rem;
   border-radius: 8px;
-  max-width: 420px;
+  border: none;
+  cursor: pointer;
 }
 
-.confirm-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: 12px;
+.cancel-btn:hover {
+  background: #ccc;
 }
 
-.btn.cancel { background: #f0f0f0; }
-.btn.confirm { background: #dc3545; color: #fff; }
+/* MOBILE */
+@media (max-width: 480px) {
+  .product-photo,
+  .no-photo {
+    width: 150px;
+    height: 150px;
+  }
+
+  .action-buttons button,
+  .save-btn,
+  .cancel-btn {
+    font-size: 0.95rem;
+  }
+}

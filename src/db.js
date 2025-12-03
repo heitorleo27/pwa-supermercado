@@ -1,65 +1,150 @@
-import { openDB } from 'idb';
+const DB_NAME = "shelfscan-db";
+const DB_VERSION = 1;
 
-/* ABERTURA DO BANCO */
-export const dbPromise = openDB('shelfscan-db', 1, {
-  upgrade(db) {
-    console.log('Criando / atualizando banco shelfscan-db');
+// ABRIR BANCO
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
 
-    // Store de lojas
-    if (!db.objectStoreNames.contains('stores')) {
-      db.createObjectStore('stores', { keyPath: 'id' });
-    }
+    req.onupgradeneeded = (event) => {
+      const db = event.target.result;
 
-    // Store de produtos
-    if (!db.objectStoreNames.contains('products')) {
-      const store = db.createObjectStore('products', { keyPath: 'productId' });
-      store.createIndex('storeId', 'storeId', { unique: false });
-    }
-  }
-});
+      // Tabela de lojas
+      if (!db.objectStoreNames.contains("stores")) {
+        const storeOS = db.createObjectStore("stores", { keyPath: "id" });
+        storeOS.createIndex("id", "id", { unique: true });
+      }
 
-/* FUNÇÕES — STORE (LOJAS) */
+      // Tabela de produtos
+      if (!db.objectStoreNames.contains("products")) {
+        const prodOS = db.createObjectStore("products", { keyPath: "productId" });
+        prodOS.createIndex("storeId", "storeId");
+        prodOS.createIndex("barcode", "barcode");
+      }
+    };
 
-// Adiciona uma loja
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = (err) => reject(err);
+  });
+}
+
+// HELPERS
+function txStore(db, storeName, mode = "readonly") {
+  return db.transaction(storeName, mode).objectStore(storeName);
+}
+
+// STORES
+
 export async function addStore(store) {
-  const db = await dbPromise;
-  await db.put('stores', store);
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const os = txStore(db, "stores", "readwrite");
+    const req = os.put(store);
+    req.onsuccess = () => resolve(true);
+    req.onerror = (err) => reject(err);
+  });
 }
 
-// Lista todas as lojas
 export async function getStores() {
-  const db = await dbPromise;
-  return db.getAll('stores');
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const os = txStore(db, "stores");
+    const req = os.getAll();
+    req.onsuccess = () => resolve(req.result || []);
+    req.onerror = (err) => reject(err);
+  });
 }
 
-/* FUNÇÕES — PRODUCTS (PRODUTOS) */
+// PRODUCTS
 
-// Adiciona produto
+// Adicionar produto
 export async function addProduct(product) {
-  const db = await dbPromise;
-  await db.put('products', product);
+  const db = await openDB();
+
+  const finalProduct = {
+    productId: product.productId || `p_${Date.now()}_${Math.random()}`,
+    storeId: product.storeId,
+    name: product.name || "",
+    barcode: product.barcode || "",
+    quantity: Number(product.quantity || 1),
+    shelf: product.shelf || "",
+    expiryDate: product.expiryDate || null,
+    createdAt: new Date().toISOString(),
+    updatedAt: null,
+    photo: product.photo || null,
+    ...product
+  };
+
+  return new Promise((resolve, reject) => {
+    const os = txStore(db, "products", "readwrite");
+    const req = os.put(finalProduct);
+    req.onsuccess = () => resolve(finalProduct);
+    req.onerror = (err) => reject(err);
+  });
 }
 
-// Lista produtos filtrando por loja
+// Buscar produtos por loja
 export async function getProductsByStore(storeId) {
-  const db = await dbPromise;
-  return db.getAllFromIndex('products', 'storeId', IDBKeyRange.only(storeId));
+  const db = await openDB();
+
+  return new Promise((resolve, reject) => {
+    const os = txStore(db, "products");
+    const index = os.index("storeId");
+    const req = index.getAll(storeId);
+
+    req.onsuccess = () => resolve(req.result || []);
+    req.onerror = (err) => reject(err);
+  });
 }
 
-// Retorna um produto pelo ID
+// Buscar produto por ID
 export async function getProductById(productId) {
-  const db = await dbPromise;
-  return db.get('products', productId);
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const os = txStore(db, "products");
+    const req = os.get(productId);
+
+    req.onsuccess = () => resolve(req.result || null);
+    req.onerror = (err) => reject(err);
+  });
 }
 
-// Atualiza um produto
-export async function updateProduct(product) {
-  const db = await dbPromise;
-  await db.put('products', product);
+// Atualizar produto
+export async function updateProduct(updatedProduct) {
+  const db = await openDB();
+
+  const final = {
+    ...updatedProduct,
+    updatedAt: new Date().toISOString()
+  };
+
+  return new Promise((resolve, reject) => {
+    const os = txStore(db, "products", "readwrite");
+    const req = os.put(final);
+    req.onsuccess = () => resolve(final);
+    req.onerror = (err) => reject(err);
+  });
 }
 
-// Remove um produto
+// Apagar produto
 export async function deleteProduct(productId) {
-  const db = await dbPromise;
-  await db.delete('products', productId);
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const os = txStore(db, "products", "readwrite");
+    const req = os.delete(productId);
+    req.onsuccess = () => resolve(true);
+    req.onerror = (err) => reject(err);
+  });
 }
+
+//EXPORT DEFAULT
+
+export default {
+  addStore,
+  getStores,
+  addProduct,
+  getProductsByStore,
+  getProductById,
+  updateProduct,
+  deleteProduct
+};

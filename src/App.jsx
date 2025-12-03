@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate, useParams } from 'react-router-dom';
 import './App.css';
 
 /* Páginas */
@@ -10,18 +10,40 @@ import ProductList from './pages/ProductList';
 import AddProductDetails from './pages/AddProductDetails';
 import AddProductOrMember from './pages/AddProductOrMember';
 import ProductDetails from './pages/ProductDetails';
-import Settings from './pages/Settings';   // placeholder
-import Sidebar from './components/Sidebar'; // placeholder, se necessário
+import Settings from './pages/Settings';
+import Sidebar from './components/Sidebar';
+
+/*WRAPPER PARA PRODUCT DETAILS*/
+
+function ProductDetailsWrapper({ user, products, onLogout, onBack, onEdit, onDelete }) {
+  const { id } = useParams();
+  const product = products.find(p => p.productId === id) || null;
+
+  return (
+    <div className="app-with-sidebar">
+      <Sidebar user={user} onLogout={onLogout} onChangeStore={null} />
+      <ProductDetails
+        product={product}
+        onBack={onBack}
+        onEdit={onEdit}
+        onDelete={onDelete}
+      />
+    </div>
+  );
+}
+
+/*APP ROUTER*/
 
 function AppRouter() {
   const navigate = useNavigate();
 
-  // estado simples de autenticação e loja selecionada
+  /*Persistência Local*/
+
   const [user, setUser] = useState(() => {
     try {
       const raw = localStorage.getItem('shelfscan_user');
       return raw ? JSON.parse(raw) : null;
-    } catch (e) {
+    } catch {
       return null;
     }
   });
@@ -30,7 +52,7 @@ function AppRouter() {
     try {
       const raw = localStorage.getItem('shelfscan_store');
       return raw ? JSON.parse(raw) : null;
-    } catch (e) {
+    } catch {
       return null;
     }
   });
@@ -39,10 +61,12 @@ function AppRouter() {
     try {
       const raw = localStorage.getItem('shelfscan_products');
       return raw ? JSON.parse(raw) : [];
-    } catch (e) {
+    } catch {
       return [];
     }
   });
+
+  /*Persistência automática*/
 
   useEffect(() => {
     localStorage.setItem('shelfscan_user', user ? JSON.stringify(user) : '');
@@ -56,9 +80,10 @@ function AppRouter() {
     localStorage.setItem('shelfscan_products', JSON.stringify(products));
   }, [products]);
 
-  // handlers
-  const handleLoginSuccess = (payload) => {
-    setUser({ ...payload });
+  /*Handlers*/
+
+  const handleLoginSuccess = (userObj) => {
+    setUser({ ...userObj });
     navigate('/stores', { replace: true });
   };
 
@@ -74,13 +99,14 @@ function AppRouter() {
   };
 
   const handleAddProduct = (product) => {
-    const p = {
+    const newProduct = {
       productId: product.productId || `p_${Date.now()}`,
       createdAt: new Date().toISOString(),
       synced: false,
       ...product
     };
-    setProducts(prev => [...prev, p]);
+
+    setProducts(prev => [...prev, newProduct]);
     navigate('/home');
   };
 
@@ -89,19 +115,26 @@ function AppRouter() {
     navigate('/home');
   };
 
-  const handleEditProduct = (updatedProduct) => {
-    setProducts(prev => prev.map(p => p.productId === updatedProduct.productId ? { ...p, ...updatedProduct, updatedAt: new Date().toISOString() } : p));
+  const handleEditProduct = (updated) => {
+    setProducts(prev =>
+      prev.map(p =>
+        p.productId === updated.productId
+          ? { ...p, ...updated, updatedAt: new Date().toISOString() }
+          : p
+      )
+    );
     navigate('/home');
   };
 
-  const handleMarkExpired = (productId) => {
-    setProducts(prev => prev.map(p => p.productId === productId ? { ...p, isMarkedExpired: true } : p));
-    navigate('/home');
-  };
+  /*Rota Protegida*/
 
-  // helpers de rota protegida
-  const RequireAuth = ({ children }) => !user ? <Navigate to="/login" replace /> : children;
-  const RequireStore = ({ children }) => !selectedStore ? <Navigate to="/stores" replace /> : children;
+  const RequireAuth = ({ children }) =>
+    !user ? <Navigate to="/login" replace /> : children;
+
+  const RequireStore = ({ children }) =>
+    !selectedStore ? <Navigate to="/stores" replace /> : children;
+
+  /*ROTAS*/
 
   return (
     <Routes>
@@ -114,64 +147,89 @@ function AppRouter() {
         </RequireAuth>
       } />
 
-      <Route path="/" element={<Navigate to={user ? (selectedStore ? '/home' : '/stores') : '/login'} replace />} />
+      {/* Redirecionamento automático */}
+      <Route path="/" element={
+        <Navigate
+          to={
+            user
+              ? selectedStore
+                ? '/home'
+                : '/stores'
+              : '/login'
+          }
+          replace
+        />
+      } />
 
-      {/* Home / Painel da loja */}
+      {/* HOME */}
       <Route path="/home" element={
         <RequireAuth>
           <RequireStore>
             <div className="app-with-sidebar">
-              <Sidebar user={user} onLogout={handleLogout} onChangeStore={() => navigate('/stores')} />
+              <Sidebar
+                user={user}
+                onLogout={handleLogout}
+                onChangeStore={() => navigate('/stores')}
+              />
               <ProductList lojaSelecionada={selectedStore} products={products} />
             </div>
           </RequireStore>
         </RequireAuth>
       } />
 
-      {/* Product details (view/edit/delete) */}
+      {/* DETALHES DO PRODUTO */}
       <Route path="/product/:id" element={
         <RequireAuth>
           <RequireStore>
-            <div className="app-with-sidebar">
-              <Sidebar user={user} onLogout={handleLogout} onChangeStore={() => navigate('/stores')} />
-              <ProductDetails
-                product={products.find(p => p.productId === (window.location.pathname.split('/product/')[1] || ''))}
-                onBack={() => navigate('/home')}
-                onEdit={handleEditProduct}
-                onDelete={handleDeleteProduct}
-                onMarkExpired={handleMarkExpired}
-              />
-            </div>
+            <ProductDetailsWrapper
+              user={user}
+              products={products}
+              onLogout={handleLogout}
+              onBack={() => navigate('/home')}
+              onEdit={handleEditProduct}
+              onDelete={handleDeleteProduct}
+            />
           </RequireStore>
         </RequireAuth>
       } />
 
-      {/* Add product (scanner/form) */}
+      {/* ADD PRODUCT */}
       <Route path="/add-product" element={
         <RequireAuth>
           <RequireStore>
-            <AddProductDetails lojaSelecionada={selectedStore} onSalvar={handleAddProduct} />
+            <AddProductDetails
+              lojaSelecionada={selectedStore}
+              onSalvar={handleAddProduct}
+            />
           </RequireStore>
         </RequireAuth>
       } />
 
-      {/* Add collaborator / invite */}
+      {/* ADD MEMBER */}
       <Route path="/add-member" element={
         <RequireAuth>
           <RequireStore>
             <div className="app-with-sidebar">
-              <Sidebar user={user} onLogout={handleLogout} onChangeStore={() => navigate('/stores')} />
+              <Sidebar
+                user={user}
+                onLogout={handleLogout}
+                onChangeStore={() => navigate('/stores')}
+              />
               <AddProductOrMember store={selectedStore} />
             </div>
           </RequireStore>
         </RequireAuth>
       } />
 
-      {/* Settings */}
+      {/* SETTINGS */}
       <Route path="/settings" element={
         <RequireAuth>
           <div className="app-with-sidebar">
-            <Sidebar user={user} onLogout={handleLogout} onChangeStore={() => navigate('/stores')} />
+            <Sidebar
+              user={user}
+              onLogout={handleLogout}
+              onChangeStore={() => navigate('/stores')}
+            />
             <Settings />
           </div>
         </RequireAuth>
@@ -183,6 +241,7 @@ function AppRouter() {
   );
 }
 
+/*APP*/
 export default function App() {
   return (
     <BrowserRouter>

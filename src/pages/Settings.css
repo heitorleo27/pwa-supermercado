@@ -1,50 +1,121 @@
-/* src/pages/Settings.css */
+/* CONTAINER PRINCIPAL */
 .settings-container {
-  max-width: 600px;
+  max-width: 520px;
   margin: 0 auto;
-  padding: 20px;
-  font-family: Arial, sans-serif;
+  padding: 1.4rem;
+  background: #f5f5f5;
+  min-height: 100vh;
+}
+
+/* TITULOS GERAIS */
+.settings-container h2 {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #222;
+  margin-bottom: 1.5rem;
 }
 
 .settings-section {
-  margin-bottom: 20px;
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 10px;
+  background: #ffffff;
+  padding: 1.2rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  margin-bottom: 1.4rem;
 }
 
 .settings-section h3 {
-  margin-bottom: 10px;
+  font-size: 1.15rem;
+  margin-bottom: 1rem;
+  color: #333;
 }
 
+/* INPUTS E FORMULARIO */
 .settings-section label {
+  font-size: 0.95rem;
+  color: #444;
   display: block;
-  margin-top: 5px;
+  margin-bottom: 0.3rem;
 }
 
-.settings-section input[type="text"],
-.settings-section input[type="email"],
-.settings-section input[type="time"],
-.settings-section input[type="number"],
+.settings-section input,
 .settings-section select {
   width: 100%;
-  padding: 5px;
-  margin-bottom: 5px;
+  padding: 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #dcdcdc;
+  margin-bottom: 0.9rem;
+  font-size: 0.95rem;
+  background: #fafafa;
 }
 
+/* Checkbox */
+.settings-section input[type="checkbox"] {
+  width: auto;
+  margin-right: 0.4rem;
+  transform: scale(1.2);
+}
+
+/* THRESHOLDS (Green | Yellow | Red) */
 .threshold-inputs {
   display: flex;
-  gap: 10px;
-  align-items: center;
+  flex-direction: column;
+  gap: 0.7rem;
 }
 
+.threshold-inputs input {
+  width: 80px;
+  display: inline-block;
+}
+
+.threshold-inputs span {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* LINKS DE SUPORTE */
+.settings-section button {
+  background: #f0f0f0;
+  border: 1px solid #ccc;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-right: 0.5rem;
+  margin-top: 0.4rem;
+  font-size: 0.9rem;
+}
+
+.settings-section button:hover {
+  background: #e5e5e5;
+}
+
+/* BOTÃO SALVAR */
 .settings-save-btn {
-  padding: 10px 20px;
-  background-color: #4caf50;
+  background: #3A7AFE;
   color: white;
+  width: 100%;
+  padding: 1rem;
+  font-size: 1rem;
+  border-radius: 10px;
   border: none;
+  margin-top: 0.5rem;
   cursor: pointer;
 }
 
 .settings-save-btn:hover {
-  background-color: #45a049;
+  opacity: 0.85;
+}
+
+/* MOBILE */
+@media (max-width: 480px) {
+  .settings-container {
+    padding: 1rem;
+  }
+
+  .settings-section {
+    padding: 1rem;
+  }
+
+  .settings-save-btn {
+    padding: 0.9rem;
+  }
 }

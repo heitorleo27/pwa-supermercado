@@ -1,49 +1,100 @@
+/* CONTAINER GERAL */
 .store-selection-container {
-  padding: 2rem;
-  max-width: 500px;
-  margin: 0 auto;
+  min-height: 100vh;
+  padding: 2rem 1.5rem;
+  background: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
+/* TÍTULO */
+.store-selection-container h2 {
+  font-size: 1.7rem;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 1.5rem;
+}
+
+/* LISTA DE LOJAS */
 .lojas-lista {
+  width: 100%;
+  max-width: 420px;
   list-style: none;
   padding: 0;
-  margin-bottom: 1rem;
+  margin: 0 0 2rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .lojas-lista li {
-  padding: 0.75rem;
-  margin-bottom: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  background: white;
+  padding: 1rem 1.2rem;
+  border-radius: 10px;
   cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  font-size: 1rem;
+  color: #333;
+  display: flex;
+  justify-content: space-between;
+  transition: transform 0.1s, background 0.15s;
 }
 
 .lojas-lista li:hover {
-  background-color: #f0f0f0;
+  background: #e9eefc;
+  transform: translateY(-2px);
 }
 
+/* FORM NOVA LOJA */
 .criar-loja-form {
+  width: 100%;
+  max-width: 420px;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 1rem;
 }
 
 .criar-loja-form input {
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  width: 100%;
+  padding: 0.9rem;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
 }
 
+.criar-loja-form input:focus {
+  border-color: #3A7AFE;
+}
+
+/* BOTÃO ADICIONAR */
 .criar-loja-form button {
-  padding: 0.75rem;
-  background-color: #2196F3;
+  padding: 0.9rem;
+  background: #3A7AFE;
   color: white;
-  font-weight: bold;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
+  font-size: 1rem;
   cursor: pointer;
+  transition: background 0.2s;
 }
 
 .criar-loja-form button:hover {
-  background-color: #1976d2;
+  background: #2e63d4;
+}
+
+/* MOBILE */
+@media (max-width: 480px) {
+  .store-selection-container {
+    padding: 1.5rem 1rem;
+  }
+  
+  .criar-loja-form {
+    padding: 1.2rem;
+  }
 }

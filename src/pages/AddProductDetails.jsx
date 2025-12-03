@@ -1,212 +1,134 @@
-import React, { useState, useEffect } from 'react';
-import './AddProductDetails.css';
-import { useNavigate } from 'react-router-dom';
-
-let dbApi = null;
-try {
-  
-  dbApi = require('../db');
-} catch (e) {
-  dbApi = null;
-}
+import { useState } from "react";
+import { FaCamera, FaArrowLeft } from "react-icons/fa";
 
 export default function AddProductDetails({ lojaSelecionada, onSalvar }) {
-  const navigate = useNavigate();
+  const [form, setForm] = useState({
+    name: "",
+    barcode: "",
+    quantity: "",
+    shelf: "",
+    expiryDate: "",
+    photo: null,
+  });
 
-  const [barcode, setBarcode] = useState('');
-  const [nameFull, setNameFull] = useState('');
-  const [quantity, setQuantity] = useState(1);
-  const [locationType, setLocationType] = useState('PRATELEIRA');
-  const [locationDesc, setLocationDesc] = useState('');
-  const [expiryDate, setExpiryDate] = useState('');
-  const [photo, setPhoto] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
 
-  const [erro, setErro] = useState('');
+  // Atualiza campos
+  const handleInput = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
 
-  // Atualiza visual da prévia da foto
-  useEffect(() => {
-    if (!photo) {
-      setPhotoPreview(null);
-      return;
-    }
-    const previewUrl = URL.createObjectURL(photo);
-    setPhotoPreview(previewUrl);
+  // Upload da foto
+  const handlePhoto = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-    return () => URL.revokeObjectURL(previewUrl);
-  }, [photo]);
-
-  // Valida campos
-  const validarCampos = () => {
-    if (!nameFull.trim()) return 'O nome do produto é obrigatório.';
-    if (!quantity || Number(quantity) <= 0) return 'Quantidade deve ser maior que zero.';
-    if (!expiryDate) return 'Data de validade é obrigatória.';
-    
-
-    return '';
+    const reader = new FileReader();
+    reader.onload = () => {
+      setPhotoPreview(reader.result);
+      setForm((prev) => ({ ...prev, photo: reader.result }));
+    };
+    reader.readAsDataURL(file);
   };
 
   // Salvar produto
-  const handleSalvar = async () => {
-    const msg = validarCampos();
-    if (msg) {
-      setErro(msg);
+  const handleSave = () => {
+    if (!form.name.trim()) {
+      alert("O produto precisa ter um nome.");
+      return;
+    }
+    if (!form.quantity) {
+      alert("Informe a quantidade.");
       return;
     }
 
-    setErro('');
-
-    const novoProduto = {
+    const payload = {
+      ...form,
       productId: `p_${Date.now()}`,
-      barcode: barcode.trim(),
-      nameFull: nameFull.trim(),
-      quantity: Number(quantity),
-      locationType,
-      locationDesc: locationType === 'OUTRO' ? locationDesc.trim() : '',
-      expiryDate,
-      photos: [], 
-      storeId: lojaSelecionada?.id || null,
       createdAt: new Date().toISOString(),
       updatedAt: null,
       synced: false,
+      storeId: lojaSelecionada?.id || lojaSelecionada?.storeId || null,
     };
 
-    // processar foto caso exista
-    if (photo) {
-      const blob = photo;
-      const blobUrl = URL.createObjectURL(blob);
-
-      novoProduto.photos.push({
-        id: `ph_${Date.now()}`,
-        blob,
-        blobUrl,
-        createdAt: new Date().toISOString(),
-      });
-    }
-
-    // Persistência via db.js se disponível
-    try {
-      if (dbApi && typeof dbApi.addProduct === 'function') {
-        await dbApi.addProduct(novoProduto);
-      } else {
-        // fallback para estado em App.jsx
-        if (typeof onSalvar === 'function') {
-          onSalvar(novoProduto);
-        }
-      }
-
-      navigate('/home');
-    } catch (err) {
-      console.error('Erro ao salvar produto:', err);
-      setErro('Erro ao salvar produto. Tente novamente.');
-    }
-  };
-
-  // Cancelar
-  const handleCancelar = () => {
-    navigate('/home');
+    onSalvar(payload);
   };
 
   return (
     <div className="add-product-container">
-      <h2>Adicionar Produto</h2>
 
-      <form className="add-product-form" onSubmit={(e) => e.preventDefault()}>
-        
-        {/* Código de barras */}
-        <label>
-          Código de barras
-          <input
-            type="text"
-            placeholder="Digite ou escaneie"
-            value={barcode}
-            onChange={(e) => setBarcode(e.target.value)}
-          />
-        </label>
+      {/* Voltar */}
+      <button className="back-btn" onClick={() => window.history.back()}>
+        <FaArrowLeft /> Voltar
+      </button>
 
-        {/* Nome completo */}
-        <label>
-          Nome completo*
-          <input
-            type="text"
-            placeholder="Nome do produto"
-            value={nameFull}
-            onChange={(e) => setNameFull(e.target.value)}
-          />
-        </label>
+      <h2 className="section-title">Adicionar Produto</h2>
 
-        {/* Quantidade */}
-        <label>
-          Quantidade*
-          <input
-            type="number"
-            min="1"
-            value={quantity}
-            onChange={(e) => setQuantity(Number(e.target.value))}
-          />
-        </label>
-
-        {/* Localização */}
-        <label>
-          Localização*
-          <select value={locationType} onChange={(e) => setLocationType(e.target.value)}>
-            <option value="PRATELEIRA">Prateleira</option>
-            <option value="ESTOQUE">Estoque</option>
-            <option value="OUTRO">Outro</option>
-          </select>
-        </label>
-
-        {/* Descrição da localização quando "OUTRO" */}
-        {locationType === 'OUTRO' && (
-          <label>
-            Especifique
-            <input
-              type="text"
-              placeholder="Ex: Depósito dos fundos"
-              value={locationDesc}
-              onChange={(e) => setLocationDesc(e.target.value)}
-            />
-          </label>
+      {/* Foto */}
+      <div className="photo-upload-block">
+        {photoPreview ? (
+          <img src={photoPreview} alt="Preview" className="product-photo" />
+        ) : (
+          <div className="no-photo-preview">Sem foto</div>
         )}
 
-        {/* Validade */}
-        <label>
-          Data de validade*
-          <input
-            type="date"
-            value={expiryDate}
-            onChange={(e) => setExpiryDate(e.target.value)}
-          />
+        <label className="photo-btn">
+          <FaCamera /> Adicionar Foto
+          <input type="file" accept="image/*" onChange={handlePhoto} hidden />
         </label>
+      </div>
 
-        {/* Foto (opcional) */}
-        <label>
-          Foto (opcional)
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setPhoto(e.target.files[0] || null)}
-          />
-        </label>
+      {/* Campos */}
+      <label className="form-label">Nome</label>
+      <input
+        type="text"
+        name="name"
+        className="form-input"
+        value={form.name}
+        onChange={handleInput}
+      />
 
-        {photoPreview && (
-          <div className="photo-preview">
-            <img src={photoPreview} alt="Prévia da foto" />
-          </div>
-        )}
+      <label className="form-label">Código de Barras</label>
+      <input
+        type="text"
+        name="barcode"
+        className="form-input"
+        value={form.barcode}
+        onChange={handleInput}
+      />
 
-        {erro && <p className="erro">{erro}</p>}
+      <label className="form-label">Quantidade</label>
+      <input
+        type="number"
+        name="quantity"
+        className="form-input"
+        value={form.quantity}
+        onChange={handleInput}
+      />
 
-        <div className="btn-actions">
-          <button type="button" onClick={handleSalvar} className="btn btn-salvar">
-            Salvar
-          </button>
+      <label className="form-label">Prateleira / Corredor</label>
+      <input
+        type="text"
+        name="shelf"
+        className="form-input"
+        value={form.shelf}
+        onChange={handleInput}
+      />
 
-          <button type="button" onClick={handleCancelar} className="btn btn-cancelar">
-            Cancelar
-          </button>
-        </div>
-      </form>
+      <label className="form-label">Validade</label>
+      <input
+        type="date"
+        name="expiryDate"
+        className="form-input"
+        value={form.expiryDate}
+        onChange={handleInput}
+      />
+
+      {/* Salvar */}
+      <button className="save-btn" onClick={handleSave}>
+        Salvar Produto
+      </button>
     </div>
   );
 }

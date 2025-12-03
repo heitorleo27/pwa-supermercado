@@ -4,92 +4,82 @@ import { useNavigate } from 'react-router-dom';
 
 let dbApi = null;
 try {
-  dbApi = require('../db');
-} catch (err) {
+  dbApi = require('../db'); // carrega db.js
+} catch (e) {
   dbApi = null;
 }
 
-export default function ProductList({ lojaSelecionada, products: productsProp = [] }) {
+export default function ProductList({ lojaSelecionada }) {
   const navigate = useNavigate();
 
-  // Estados principais
   const [produtos, setProdutos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
-  const [filter, setFilter] = useState('ALL');
-  const [editingId, setEditingId] = useState(null);
-  const [editingQuantity, setEditingQuantity] = useState(1);
-  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const [filter, setFilter] = useState('ALL'); // ALL | NEXT7 | EXPIRED
   const [error, setError] = useState(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
-  // Helpers
-  const daysRemaining = (expiryDateStr) => {
-    if (!expiryDateStr) return Infinity;
+  // -----------------------
+  // UTIL: dias até vencer
+  // -----------------------
+  const getDaysRemaining = (expiry) => {
+    if (!expiry) return Infinity;
     const today = new Date();
-    const expiry = new Date(expiryDateStr);
-    const diff = Math.floor((expiry - today) / (1000 * 60 * 60 * 24));
-    return diff;
+    const dt = new Date(expiry);
+    return Math.floor((dt - today) / (1000 * 60 * 60 * 24));
   };
 
-  const statusColor = (expiryDateStr) => {
-    const days = daysRemaining(expiryDateStr);
+  const getStatusColor = (days) => {
     if (days > 21) return 'green';
     if (days >= 11) return 'yellow';
-    return 'red';
+    return 'red'; // inclui vencidos
   };
 
-  // Carregar produtos
+  // -----------------------
+  // CARREGAR PRODUTOS
+  // -----------------------
   useEffect(() => {
     let mounted = true;
 
-    async function carregar() {
+    async function load() {
       setLoading(true);
       setError(null);
 
       try {
-        if (
-          dbApi &&
-          typeof dbApi.getProductsByStore === 'function' &&
-          lojaSelecionada &&
-          lojaSelecionada.id != null
-        ) {
+        if (dbApi && typeof dbApi.getProductsByStore === 'function') {
           const arr = await dbApi.getProductsByStore(lojaSelecionada.id);
-          if (!mounted) return;
-          setProdutos(Array.isArray(arr) ? arr : []);
-        } else if (productsProp && Array.isArray(productsProp)) {
-          setProdutos(productsProp);
+          if (mounted) setProdutos(arr || []);
         } else {
           setProdutos([]);
         }
       } catch (err) {
-        console.error('Erro ao carregar produtos:', err);
-        setError('Erro ao carregar produtos.');
+        console.error(err);
+        setError("Erro ao carregar produtos.");
         setProdutos([]);
       } finally {
         if (mounted) setLoading(false);
       }
     }
 
-    carregar();
+    if (lojaSelecionada?.id) load();
 
-    return () => {
-      mounted = false;
-    };
-  }, [lojaSelecionada, productsProp]);
+    return () => { mounted = false; };
+  }, [lojaSelecionada]);
 
-  // Filtragem + ordenação
+  // -----------------------
+  // FILTRAR E ORDENAR
+  // -----------------------
   const getVisibleProducts = () => {
-    const q = (query || '').trim().toLowerCase();
+    const q = query.toLowerCase().trim();
 
-    const filtered = produtos.filter((p) => {
-      const matchQuery =
-        !q ||
-        (p.nameFull && p.nameFull.toLowerCase().includes(q)) ||
-        (p.barcode && p.barcode.toString().toLowerCase().includes(q));
+    let list = produtos.filter(p => {
+      const match =
+        p.name?.toLowerCase().includes(q) ||
+        p.barcode?.toString().toLowerCase().includes(q);
 
-      if (!matchQuery) return false;
+      if (!match) return false;
 
-      const days = daysRemaining(p.expiryDate);
+      const days = getDaysRemaining(p.expiryDate);
 
       if (filter === 'NEXT7') return days <= 7 && days >= 0;
       if (filter === 'EXPIRED') return days < 0;
@@ -97,213 +87,163 @@ export default function ProductList({ lojaSelecionada, products: productsProp = 
       return true;
     });
 
-    filtered.sort((a, b) => {
-      const aDate = a.expiryDate ? new Date(a.expiryDate).getTime() : Infinity;
-      const bDate = b.expiryDate ? new Date(b.expiryDate).getTime() : Infinity;
-
-      if (aDate !== bDate) return aDate - bDate;
-
-      const aq = Number(a.quantity || 0);
-      const bq = Number(b.quantity || 0);
-
-      return bq - aq;
+    // ordenar por validade -> quantidade
+    list.sort((a, b) => {
+      const da = new Date(a.expiryDate).getTime() || Infinity;
+      const db = new Date(b.expiryDate).getTime() || Infinity;
+      if (da !== db) return da - db;
+      return (b.quantity || 0) - (a.quantity || 0);
     });
 
-    return filtered;
+    return list;
   };
 
-  // Navegação
+  const visible = getVisibleProducts();
+
+  // -----------------------
+  // NAVIGATE
+  // -----------------------
   const handleAddProduct = () => {
     navigate('/add-product');
   };
 
-  const handleOpenDetails = (productId) => {
-    navigate(`/product/${productId}`);
+  const openDetails = (id) => {
+    navigate(`/product/${id}`);
   };
 
-  // Edição inline de quantidade
-  const startEditQuantity = (product) => {
-    setEditingId(product.productId);
-    setEditingQuantity(product.quantity || 1);
-  };
-
-  const cancelEdit = () => {
-    setEditingId(null);
-    setEditingQuantity(1);
-  };
-
-  const saveEditQuantity = async () => {
-    if (!editingId) return;
-
-    const updatedArr = produtos.map((p) =>
-      p.productId === editingId
-        ? { ...p, quantity: Number(editingQuantity), updatedAt: new Date().toISOString() }
-        : p
-    );
-
-    setProdutos(updatedArr);
-    setEditingId(null);
-
-    try {
-      if (dbApi && typeof dbApi.updateProduct === 'function') {
-        const old = await dbApi.getProductById(editingId);
-        if (old) {
-          await dbApi.updateProduct({
-            ...old,
-            quantity: Number(editingQuantity),
-            updatedAt: new Date().toISOString(),
-          });
-        }
-      }
-    } catch (err) {
-      console.error('Erro ao atualizar quantidade no DB:', err);
-      setError('Erro ao salvar quantidade.');
-    }
-  };
-
-  // Exclusão
-  const confirmDelete = (productId) => {
-    setConfirmDeleteId(productId);
+  // -----------------------
+  // DELETE
+  // -----------------------
+  const confirmDelete = (id) => {
+    setConfirmDeleteId(id);
   };
 
   const doDelete = async () => {
     const id = confirmDeleteId;
-    setConfirmDeleteId(null);
-
     if (!id) return;
 
+    setConfirmDeleteId(null);
     try {
-      setProdutos((prev) => prev.filter((p) => p.productId !== id));
-
       if (dbApi && typeof dbApi.deleteProduct === 'function') {
         await dbApi.deleteProduct(id);
       }
+      setProdutos(prev => prev.filter(p => p.productId !== id));
     } catch (err) {
-      console.error('Erro ao deletar produto:', err);
-      setError('Erro ao deletar produto.');
+      console.error(err);
+      setError("Erro ao excluir produto.");
     }
   };
 
-  // Render item
-  const renderProductItem = (product) => {
-    const days = daysRemaining(product.expiryDate);
-    const color = statusColor(product.expiryDate);
-
-    const thumb =
-      product.photoUrl ||
-      (product.photos && product.photos[0] && product.photos[0].blobUrl) ||
-      '/placeholder.png';
-
-    return (
-      <div key={product.productId} className="product-item">
-        <img src={thumb} alt={product.nameFull} className="product-thumb" />
-
-        <div className="product-info">
-          <p className="product-name" onClick={() => handleOpenDetails(product.productId)}>
-            {product.nameFull}
-          </p>
-          <p className="product-expiry">
-            Validade: {product.expiryDate || '—'} (
-            {Number.isFinite(days) ? `${days} dias` : '—'})
-          </p>
-        </div>
-
-        <div className={`status-badge ${color}`}></div>
-
-        <div className="product-quantity">
-          {editingId === product.productId ? (
-            <div className="quantity-editor">
-              <input
-                type="number"
-                min="0"
-                value={editingQuantity}
-                onChange={(e) => setEditingQuantity(Number(e.target.value))}
-              />
-              <button onClick={saveEditQuantity} className="btn-save-qty">Salvar</button>
-              <button onClick={cancelEdit} className="btn-cancel-qty">Cancelar</button>
-            </div>
-          ) : (
-            <>
-              <div className="qty-text">Qtd: {product.quantity}</div>
-              <div className="qty-actions">
-                <button onClick={() => startEditQuantity(product)} className="btn-edit-qty">✎</button>
-                <button onClick={() => confirmDelete(product.productId)} className="btn-delete">🗑</button>
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-    );
-  };
-
-  // Produtos visíveis
-  const visible = getVisibleProducts();
-
-  // RETURN
+  // -----------------------
+  // RENDER
+  // -----------------------
   return (
     <div className="product-list-container">
-      <header className="product-list-header">
-        <div className="title-block">
-          <h2>{lojaSelecionada ? lojaSelecionada.nome : 'Loja não selecionada'}</h2>
-          {lojaSelecionada?.cidade && <div className="meta">{lojaSelecionada.cidade}</div>}
-        </div>
 
-        <div className="header-actions">
-          <div className="search-filter">
-            <input
-              type="search"
-              placeholder="Buscar por nome ou código..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
+      <header className="list-header">
+        <h2>{lojaSelecionada?.nome || "Loja"}</h2>
+        <p className="city">{lojaSelecionada?.cidade || ""}</p>
 
-            <select value={filter} onChange={(e) => setFilter(e.target.value)}>
-              <option value="ALL">Todos</option>
-              <option value="NEXT7">Próximos (≤7 dias)</option>
-              <option value="EXPIRED">Vencidos</option>
-            </select>
-          </div>
+        <div className="search-area">
+          <input
+            type="search"
+            placeholder="Buscar por nome ou código"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
 
-          <div className="action-buttons">
-            <button onClick={handleAddProduct} className="btn-add">+ Adicionar produto</button>
-          </div>
+          <select value={filter} onChange={(e) => setFilter(e.target.value)}>
+            <option value="ALL">Todos</option>
+            <option value="NEXT7">Próximos a vencer (≤7 dias)</option>
+            <option value="EXPIRED">Vencidos</option>
+          </select>
+
+          <button className="add-button" onClick={handleAddProduct}>
+            + Adicionar produto
+          </button>
         </div>
       </header>
 
       {loading ? (
-        <div className="loading">Carregando produtos...</div>
+        <div className="loading">Carregando...</div>
       ) : (
-        <main className="product-list-main">
-          {error && <div className="error">{error}</div>}
+        <main>
+          {error && <div className="error-box">{error}</div>}
 
           {visible.length === 0 ? (
-            <div className="empty-state">
+            <div className="empty-box">
               <p>Nenhum produto encontrado.</p>
-              <button onClick={handleAddProduct} className="btn-add">
+              <button onClick={handleAddProduct} className="add-button">
                 Adicionar primeiro produto
               </button>
             </div>
           ) : (
-            <div className="products-grid">{visible.map(renderProductItem)}</div>
+            <div className="products-grid">
+              {visible.map((p) => {
+                const days = getDaysRemaining(p.expiryDate);
+                const color = getStatusColor(days);
+                const thumb =
+                  p.photo ||
+                  (p.photos?.[0]?.blobUrl) ||
+                  "/placeholder.png";
+
+                return (
+                  <div key={p.productId} className="product-card">
+
+                    <img
+                      src={thumb}
+                      alt={p.name}
+                      className="product-thumb"
+                      onClick={() => openDetails(p.productId)}
+                    />
+
+                    <div className="product-info">
+                      <h3 className="p-name" onClick={() => openDetails(p.productId)}>
+                        {p.name}
+                      </h3>
+
+                      <p className="p-expiry">
+                        Validade: {p.expiryDate || "—"}{" "}
+                        <span className={`exp-badge ${color}`}>
+                          {Number.isFinite(days)
+                            ? days >= 0
+                              ? `${days} dias`
+                              : `Vencido (${Math.abs(days)} dias)`
+                            : ""}
+                        </span>
+                      </p>
+
+                      <p className="p-qty">Qtd: {p.quantity}</p>
+
+                      <button
+                        className="delete-btn"
+                        onClick={() => confirmDelete(p.productId)}
+                      >
+                        Excluir
+                      </button>
+                    </div>
+
+                  </div>
+                );
+              })}
+            </div>
           )}
         </main>
       )}
 
+      {/* CONFIRMAÇÃO DE EXCLUSÃO */}
       {confirmDeleteId && (
         <div className="confirm-overlay">
           <div className="confirm-box">
-            <p>Tem certeza que deseja excluir este produto?</p>
+            <p>Deseja realmente excluir este produto?</p>
             <div className="confirm-actions">
-              <button className="btn cancel" onClick={() => setConfirmDeleteId(null)}>
-                Cancelar
-              </button>
-              <button className="btn confirm" onClick={doDelete}>
-                Excluir
-              </button>
+              <button onClick={() => setConfirmDeleteId(null)}>Cancelar</button>
+              <button className="danger" onClick={doDelete}>Excluir</button>
             </div>
           </div>
         </div>
       )}
+
     </div>
   );
 }

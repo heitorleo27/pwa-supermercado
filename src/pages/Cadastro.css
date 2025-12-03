@@ -1,49 +1,106 @@
+/* CONTAINER GERAL */
 .cadastro-container {
+  min-height: 100vh;
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
   padding: 2rem;
-  max-width: 400px;
-  margin: 0 auto;
+  background: #f5f5f5;
 }
 
-.cadastro-form {
+/* CARD */
+.cadastro-card {
+  width: 100%;
+  max-width: 420px;
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
   display: flex;
   flex-direction: column;
+  gap: 1.3rem;
+}
+
+/* TÍTULO */
+.cadastro-title {
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #222;
+}
+
+/* CAMPOS */
+.cadastro-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.cadastro-field label {
+  font-size: 0.95rem;
+  color: #444;
+}
+
+.cadastro-field input {
+  padding: 0.85rem;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.cadastro-field input:focus {
+  border-color: #3A7AFE;
+}
+
+/* BOTÃO */
+.cadastro-button {
   width: 100%;
-}
-
-.cadastro-form label {
-  margin-bottom: 1rem;
-  font-weight: 500;
-}
-
-.cadastro-form input {
-  width: 100%;
-  padding: 0.5rem;
-  margin-top: 0.25rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.btn-cadastro {
-  padding: 0.75rem;
-  background-color: #4CAF50;
+  padding: 0.95rem;
+  background: #3A7AFE;
   color: white;
-  font-weight: bold;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
+  font-size: 1rem;
   cursor: pointer;
-  margin-top: 1rem;
+  transition: background 0.2s;
+  margin-top: 0.5rem;
 }
 
-.btn-cadastro:hover {
-  background-color: #45a049;
+.cadastro-button:hover {
+  background: #2e63d4;
 }
 
-.erro {
-  color: red;
+/* ERRO */
+.cadastro-error {
+  background: #ffefef;
+  color: #c62828;
+  border-left: 4px solid #c62828;
+  padding: 0.75rem;
+  border-radius: 6px;
   font-size: 0.9rem;
+}
+
+/* LINK VOLTAR AO LOGIN */
+.cadastro-login {
+  text-align: center;
   margin-top: -0.5rem;
-  margin-bottom: 1rem;
+}
+
+.cadastro-login a {
+  color: #3A7AFE;
+  font-size: 0.95rem;
+  text-decoration: none;
+}
+
+.cadastro-login a:hover {
+  text-decoration: underline;
+}
+
+/* MOBILE */
+@media (max-width: 480px) {
+  .cadastro-card {
+    padding: 1.6rem;
+  }
 }
