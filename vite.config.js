@@ -3,6 +3,9 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+
+  base: '/pwa-supermercado/', 
+  
   plugins: [
     react(),
     VitePWA({
@@ -12,8 +15,11 @@ export default defineConfig({
         name: 'PWA Supermercado',
         short_name: 'Supermercado',
         description: 'Aplicativo PWA de supermercado feito com Vite + React',
-        theme_color: '#ffffff',
-        background_color: '#ffffff',
+        
+      
+        theme_color: '#121212', 
+        background_color: '#121212',
+        
         display: 'standalone',
         scope: '/',
         start_url: '/',
