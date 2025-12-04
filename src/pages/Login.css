@@ -1,105 +1,145 @@
-/* CONTAINER GERAL */
+/* Variáveis de Cores (Consistente com os outros componentes) */
+:root {
+    --color-background: #121212;
+    --color-surface: #1e1e1e;
+    --color-text-light: #ffffff;
+    --color-text-secondary: #aaaaaa;
+    --color-primary-action: #007bff;
+    --color-error: #f44336;
+    --color-input-border: #333;
+}
+
 .login-container {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem;
-  background: #f7f7f7;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+    background-color: var(--color-background);
+    color: var(--color-text-light);
+    text-align: center;
 }
 
-/* CARD */
-.login-card {
-  background: white;
-  width: 100%;
-  max-width: 380px;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
+.app-title {
+    font-size: 38px;
+    font-weight: 800;
+    color: var(--color-primary-action);
+    margin-bottom: 8px;
 }
 
-/* TÍTULO */
-.login-title {
-  text-align: center;
-  font-size: 1.6rem;
-  font-weight: 600;
-  color: #222;
-  margin-bottom: 0.5rem;
+.app-subtitle {
+    font-size: 16px;
+    color: var(--color-text-secondary);
+    margin-bottom: 30px;
 }
 
-/* CAMPOS */
-.login-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
+.login-form {
+    width: 100%;
+    max-width: 400px;
+    padding: 25px;
+    background-color: var(--color-surface);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    text-align: left;
 }
 
-.login-field label {
-  font-size: 0.95rem;
-  color: #444;
+/* Estilos de Formulário (Reutilizando a base de Cadastro) */
+.form-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    margin-top: 15px;
+    margin-bottom: 5px;
 }
 
-.login-field input {
-  padding: 0.8rem;
-  border-radius: 8px;
-  border: 1px solid #dcdcdc;
-  font-size: 1rem;
-  outline: none;
-  transition: border-color 0.2s;
+.form-input {
+    width: 100%;
+    padding: 12px;
+    background-color: #2a2a2a;
+    border: 1px solid var(--color-input-border);
+    border-radius: 6px;
+    color: var(--color-text-light);
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
 }
 
-.login-field input:focus {
-  border-color: #3A7AFE;
+.form-input:focus {
+    outline: none;
+    border-color: var(--color-primary-action);
 }
 
-/* BOTÃO */
-.login-button {
-  background: #3A7AFE;
-  color: white;
-  border: none;
-  padding: 0.9rem;
-  font-size: 1rem;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.2s;
+.password-wrapper {
+    position: relative;
 }
 
-.login-button:hover {
-  background: #2e63d4;
+.password-wrapper .form-input {
+    padding-right: 40px;
 }
 
-/* LINK DE CADASTRO */
-.login-register {
-  text-align: center;
-  margin-top: 0.5rem;
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    font-size: 18px;
+    transition: color 0.2s;
 }
 
-.login-register a {
-  color: #3A7AFE;
-  text-decoration: none;
-  font-size: 0.95rem;
+.password-toggle:hover {
+    color: var(--color-text-light);
 }
 
-.login-register a:hover {
-  text-decoration: underline;
+.input-error {
+    border-color: var(--color-error) !important;
 }
 
-/* ERRO */
-.login-error {
-  background: #ffefef;
-  color: #c62828;
-  border-left: 4px solid #c62828;
-  padding: 0.7rem;
-  border-radius: 6px;
-  font-size: 0.9rem;
+.error-text {
+    color: var(--color-error);
+    font-size: 13px;
+    margin-top: 4px;
+    margin-bottom: 0;
 }
 
-/* MOBILE */
-@media (max-width: 480px) {
-  .login-card {
-    padding: 1.5rem;
-  }
+/* Botão de Login (Entrar) */
+.login-btn {
+    width: 100%;
+    padding: 14px;
+    margin-top: 30px;
+    background-color: var(--color-primary-action);
+    color: var(--color-text-light);
+    border: none;
+    border-radius: 8px;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.login-btn:hover {
+    background-color: #0056b3;
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+}
+
+/* Link para Cadastro */
+.register-link {
+    margin-top: 25px;
+    font-size: 14px;
+    color: var(--color-text-secondary);
+}
+
+.register-link a {
+    color: var(--color-primary-action);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.register-link a:hover {
+    color: #4da6ff;
+    text-decoration: underline;
 }

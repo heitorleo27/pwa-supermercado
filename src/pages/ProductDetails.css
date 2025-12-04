@@ -1,213 +1,234 @@
-/* CONTAINER PRINCIPAL */
-.product-details-container {
-  width: 100%;
-  max-width: 520px;
-  margin: 0 auto;
-  padding: 1.8rem 1.3rem;
-  background: #f5f5f5;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+/* Variáveis de Cores */
+:root {
+    --color-background: #121212;
+    --color-surface: #1e1e1e;
+    --color-text-light: #ffffff;
+    --color-text-secondary: #aaaaaa;
+    --color-primary-action: #007bff;
+    --color-edit-btn: #ffa500; 
+    --color-delete-btn: #f44336; 
+    --color-input-border: #333;
+
+    /* Cores de Status de Validade */
+    --status-green: #4caf50;    /* Mais de 21 dias */
+    --status-yellow: #ffeb3b;   /* Entre 11 e 21 dias */
+    --status-red: #f44336;      /* 10 dias ou menos / Vencido */
 }
 
-/* BOTÃO VOLTAR */
+.product-details-container {
+    padding: 20px;
+    max-width: 700px;
+    margin: 0 auto;
+    background-color: var(--color-background);
+    color: var(--color-text-light);
+}
+
+.section-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-top: 10px;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
+}
+
+/* 1. Botão Voltar (Reutiliza o estilo de AddProductDetails) */
 .back-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  background: transparent;
-  color: #3A7AFE;
-  font-size: 1rem;
-  border: none;
-  cursor: pointer;
-  margin-bottom: 1rem;
+    background: none;
+    border: none;
+    color: var(--color-text-secondary);
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 10px;
+    padding: 5px 0;
+    transition: color 0.2s;
 }
 
 .back-btn:hover {
-  text-decoration: underline;
+    color: var(--color-text-light);
 }
 
-/* TÍTULO */
-.section-title {
-  text-align: center;
-  font-size: 1.5rem;
-  color: #222;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
+.back-btn svg {
+    margin-right: 8px;
 }
 
-/* FOTO */
+/* 2. Visualização da Foto */
 .photo-wrapper {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 1.5rem;
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .product-photo {
-  width: 180px;
-  height: 180px;
-  border-radius: 12px;
-  object-fit: cover;
-  background: #ddd;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 3px solid var(--color-surface);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
 .no-photo {
-  width: 180px;
-  height: 180px;
-  border-radius: 12px;
-  background: #d6d6d6;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #555;
-  font-size: 1rem;
+    width: 150px;
+    height: 150px;
+    background-color: var(--color-surface);
+    border: 1px dashed var(--color-text-secondary);
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--color-text-secondary);
+    font-size: 14px;
 }
 
-/* PAINEL DE INFORMAÇÕES */
+/* 3. Painel de Informações (Visualização) */
 .info-panel {
-  background: white;
-  padding: 1.4rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
+    background-color: var(--color-surface);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .info-panel p {
-  font-size: 1rem;
-  color: #333;
+    font-size: 16px;
+    margin: 10px 0;
+    border-bottom: 1px dashed #333;
+    padding-bottom: 5px;
 }
 
-/* FLAG VENCIDO */
-.expired-flag {
-  margin-top: 0.5rem;
-  background: #ffe5e5;
-  color: #b60000;
-  padding: 0.7rem 1rem;
-  border-radius: 8px;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.info-panel p strong {
+    color: var(--color-text-light);
+    display: inline-block;
+    min-width: 120px;
 }
 
-/* BOTÕES DE AÇÃO */
+/* 4. Badge de Status de Validade */
+.days-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.days-badge.green {
+    background-color: var(--status-green);
+    color: #000; 
+}
+
+.days-badge.yellow {
+    background-color: var(--status-yellow);
+    color: #000;
+}
+
+.days-badge.red {
+    background-color: var(--status-red);
+    color: var(--color-text-light);
+}
+
+
+/* 5. Botões de Ação (Visualização) */
 .action-buttons {
-  margin-top: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px solid #333;
+    justify-content: flex-end;
 }
 
-.action-buttons button {
-  padding: 0.9rem;
-  font-size: 1rem;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  transition: opacity 0.15s;
+.edit-btn, .delete-btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: opacity 0.2s, background-color 0.2s;
 }
 
-/* EDITAR */
 .edit-btn {
-  background: #3A7AFE;
-  color: white;
+    background-color: var(--color-edit-btn);
+    color: #000;
 }
 
 .edit-btn:hover {
-  opacity: 0.85;
+    background-color: #cc8400;
 }
 
-/* MARCAR VENCIDO */
-.expired-btn {
-  background: #FFB200;
-  color: #222;
-}
-
-.expired-btn:hover {
-  opacity: 0.85;
-}
-
-/* DELETAR */
 .delete-btn {
-  background: #e74c3c;
-  color: white;
+    background-color: var(--color-delete-btn);
+    color: var(--color-text-light);
 }
 
 .delete-btn:hover {
-  opacity: 0.85;
+    background-color: #c4382c;
 }
 
-/* FORM DE EDIÇÃO */
+.edit-btn svg, .delete-btn svg {
+    margin-right: 8px;
+}
+
+/* 6. Formulário de Edição (Reutilizando estilos de AddProductDetails) */
 .edit-form {
-  background: white;
-  padding: 1.4rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+    background-color: var(--color-surface);
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
 .form-label {
-  font-size: 0.95rem;
-  color: #444;
-  margin-bottom: -0.4rem;
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    margin-top: 15px;
+    margin-bottom: 5px;
 }
 
 .form-input {
-  padding: 0.9rem;
-  border: 1px solid #dcdcdc;
-  border-radius: 8px;
-  font-size: 1rem;
-  outline: none;
+    width: 100%;
+    padding: 12px;
+    background-color: #2a2a2a;
+    border: 1px solid var(--color-input-border);
+    border-radius: 6px;
+    color: var(--color-text-light);
+    font-size: 16px;
+    box-sizing: border-box;
 }
 
-.form-input:focus {
-  border-color: #3A7AFE;
-}
-
-/* BOTÕES DO FORM */
 .save-btn {
-  background: #3A7AFE;
-  color: white;
-  padding: 0.9rem;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-}
-
-.save-btn:hover {
-  opacity: 0.85;
+    width: 100%;
+    padding: 12px;
+    margin-top: 20px;
+    background-color: var(--color-primary-action);
+    color: var(--color-text-light);
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
 .cancel-btn {
-  background: #ddd;
-  color: #222;
-  padding: 0.9rem;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    background: none;
+    color: var(--color-text-secondary);
+    border: 1px solid #444;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
 .cancel-btn:hover {
-  background: #ccc;
-}
-
-/* MOBILE */
-@media (max-width: 480px) {
-  .product-photo,
-  .no-photo {
-    width: 150px;
-    height: 150px;
-  }
-
-  .action-buttons button,
-  .save-btn,
-  .cancel-btn {
-    font-size: 0.95rem;
-  }
+    background-color: #2a2a2a;
 }

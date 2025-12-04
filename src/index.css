@@ -1,180 +1,95 @@
-/*RESET GLOBAL*/
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html, body {
-  font-family: 'Inter', Arial, sans-serif;
-  background: #f7f7f7;
-  color: #222;
-  height: 100%;
-  width: 100%;
-  overflow-x: hidden;
-}
-
-button {
-  cursor: pointer;
-  border: none;
-  outline: none;
-}
-
-input, select, textarea, button {
-  font-family: inherit;
-}
-
-/*ROOT COLORS*/
+/* 1. VARIÁVEIS DE CORES GLOBAIS (DARK MODE) */
 :root {
-  --primary: #3a80ff;
-  --primary-dark: #2f6ad6;
+    /* Base */
+    --color-background: #121212; 
+    --color-surface: #1e1e1e; 
+    --color-surface-light: #2a2a2a; 
+    
+    /* Texto */
+    --color-text-light: #ffffff;
+    --color-text-secondary: #aaaaaa; 
+    
+    /* Ações e Destaques */
+    --color-primary-action: #007bff; 
+    --color-delete-btn: #f44336; 
+    --color-edit-btn: #ffa500; 
+    --color-error: #f44336; 
+    --color-input-border: #333; 
 
-  --green: #27c281;
-  --yellow: #ffcc00;
-  --red: #ff4b4b;
+    /* Validade (Thresholds) */
+    --status-green: #4caf50;
+    --status-yellow: #ffc107;
+    --status-red: #d32f2f;
 
-  --bg-light: #ffffff;
-  --bg-gray: #f1f1f1;
-  --text-dark: #1a1a1a;
+    /* Layout */
+    --color-sidebar-width: 250px;
 }
 
-/*PWA WRAPPER*/
-#root {
-  height: 100%;
-  width: 100%;
+/* 2. CSS RESET / NORMALIZE */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-/*PAGE CONTAINERS*/
-.page-container {
-  padding: 1rem;
-  width: 100%;
-  max-width: 480px;
-  margin: 0 auto;
+/* 3. ESTILOS DE CORPO E ROOT (APLICANDO O DARK MODE) */
+body, html, #root {
+    height: 100%;
+    /* Aplica a fonte importada no Index.html */
+    font-family: 'Inter', sans-serif; 
+    
+    /* Aplica o fundo escuro e cor do texto claro */
+    background-color: var(--color-background);
+    color: var(--color-text-light);
+    
+    /* Boa prática para acessibilidade e aparência moderna */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-/*TITLES*/
-.page-title {
-  font-size: 1.6rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-  text-align: center;
+/* 4. ESTILOS DE INPUT E BOTÃO BASE */
+
+/* Remove foco padrão estranho */
+input, select, textarea, button {
+    font-family: inherit;
+    color: inherit;
+    border: none;
+    outline: none;
 }
 
-/*FORM ELEMENTS*/
-.input-group {
-  margin-bottom: 1rem;
+/* Estilo para links globais */
+a {
+    color: var(--color-primary-action);
+    text-decoration: none;
 }
 
-label {
-  display: block;
-  font-size: 0.9rem;
-  margin-bottom: 0.3rem;
-  color: #555;
+a:hover {
+    text-decoration: underline;
 }
 
-input, select {
-  width: 100%;
-  padding: 0.75rem;
-  border-radius: 8px;
-  border: 1px solid #d3d3d3;
-  background: #fff;
-  font-size: 1rem;
+/* Garante que imagens sem foto não quebrem o layout */
+img {
+    max-width: 100%;
+    display: block;
 }
 
-input:focus, select:focus {
-  border-color: var(--primary);
+/* Estilização específica para o scrollbar (melhora a estética em navegadores Webkit) */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
 }
 
-/*BUTTONS*/
-.btn {
-  width: 100%;
-  padding: 0.8rem;
-  background: var(--primary);
-  color: #fff;
-  border-radius: 8px;
-  font-size: 1rem;
-  text-align: center;
-  font-weight: 500;
-  transition: background 0.2s;
+::-webkit-scrollbar-track {
+    background: #2a2a2a;
 }
 
-.btn:hover {
-  background: var(--primary-dark);
+::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 4px;
 }
 
-.btn-outline {
-  background: transparent;
-  border: 2px solid var(--primary);
-  color: var(--primary);
-}
-
-.btn-outline:hover {
-  background: var(--primary);
-  color: #fff;
-}
-
-/*STATUS BADGES (cores padrão do projeto)*/
-.status-green {
-  color: var(--green);
-  font-weight: 600;
-}
-
-.status-yellow {
-  color: var(--yellow);
-  font-weight: 600;
-}
-
-.status-red {
-  color: var(--red);
-  font-weight: 600;
-}
-
-/*EMPTY STATE*/
-.empty-state {
-  text-align: center;
-  color: #777;
-  padding: 2rem 1rem;
-}
-
-/*SPACING HELPERS*/
-.mt1 { margin-top: 1rem; }
-.mt2 { margin-top: 2rem; }
-.mb1 { margin-bottom: 1rem; }
-.mb2 { margin-bottom: 2rem; }
-
-/*LOADING*/
-.loading {
-  text-align: center;
-  padding: 2rem;
-  font-size: 1.1rem;
-  color: #555;
-}
-
-/*CONFIRM OVERLAY*/
-.confirm-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.confirm-box {
-  background: #fff;
-  width: 90%;
-  max-width: 360px;
-  padding: 1.5rem;
-  border-radius: 12px;
-  text-align: center;
-}
-
-.confirm-box .btn {
-  margin-top: 1rem;
-}
-
-.confirm-actions {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1.5rem;
+::-webkit-scrollbar-thumb:hover {
+    background: #777;
 }

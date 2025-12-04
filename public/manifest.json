@@ -1,37 +1,22 @@
 {
-  "name": "PWA Supermercado",
-  "short_name": "Supermercado",
-  "description": "Aplicativo PWA de supermercado feito com Vite + React",
-  "start_url": "/",
-  "scope": "/",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#ffffff",
-  "orientation": "portrait",
+  "short_name": "ShelfScan",
+  "name": "ShelfScan - Controle de Estoque",
+  "description": "Controle simples e rápido de estoque e validade.",
   "icons": [
     {
-      "src": "/icons/icon-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png"
+      "src": "/vite.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192"
     },
     {
-      "src": "/icons/icon-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "src": "/vite.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512"
     }
   ],
-  "screenshots": [
-    {
-      "src": "/screenshots/wide.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide"
-    },
-    {
-      "src": "/screenshots/narrow.png",
-      "sizes": "720x1280",
-      "type": "image/png",
-      "form_factor": "narrow"
-    }
-  ]
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#121212",
+  "background_color": "#121212",
+  "orientation": "portrait"
 }

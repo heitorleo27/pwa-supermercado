@@ -1,121 +1,207 @@
-/* CONTAINER PRINCIPAL */
+/* Variáveis de Cores (Consistente) */
+:root {
+    --color-background: #121212;
+    --color-surface: #1e1e1e;
+    --color-text-light: #ffffff;
+    --color-text-secondary: #aaaaaa;
+    --color-primary-action: #007bff; 
+    --color-input-border: #333;
+
+    --status-green: #4caf50;
+    --status-yellow: #ffc107;
+    --status-red: #d32f2f;
+}
+
 .settings-container {
-  max-width: 520px;
-  margin: 0 auto;
-  padding: 1.4rem;
-  background: #f5f5f5;
-  min-height: 100vh;
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: var(--color-background);
+    color: var(--color-text-light);
 }
 
-/* TITULOS GERAIS */
-.settings-container h2 {
-  text-align: center;
-  font-size: 1.5rem;
-  color: #222;
-  margin-bottom: 1.5rem;
+.settings-title {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: var(--color-text-light);
 }
 
+/* Estilo da Seção */
 .settings-section {
-  background: #ffffff;
-  padding: 1.2rem;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  margin-bottom: 1.4rem;
+    background-color: var(--color-surface);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-.settings-section h3 {
-  font-size: 1.15rem;
-  margin-bottom: 1rem;
-  color: #333;
+.section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--color-primary-action);
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #333;
 }
 
-/* INPUTS E FORMULARIO */
-.settings-section label {
-  font-size: 0.95rem;
-  color: #444;
-  display: block;
-  margin-bottom: 0.3rem;
+/* Estilos de Formulário (Padrão) */
+.form-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    margin-top: 15px;
+    margin-bottom: 5px;
 }
 
-.settings-section input,
-.settings-section select {
-  width: 100%;
-  padding: 0.8rem;
-  border-radius: 8px;
-  border: 1px solid #dcdcdc;
-  margin-bottom: 0.9rem;
-  font-size: 0.95rem;
-  background: #fafafa;
+.form-input {
+    width: 100%;
+    padding: 12px;
+    background-color: #2a2a2a;
+    border: 1px solid var(--color-input-border);
+    border-radius: 6px;
+    color: var(--color-text-light);
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
 }
 
-/* Checkbox */
-.settings-section input[type="checkbox"] {
-  width: auto;
-  margin-right: 0.4rem;
-  transform: scale(1.2);
+.form-input:focus {
+    outline: none;
+    border-color: var(--color-primary-action);
 }
 
-/* THRESHOLDS (Green | Yellow | Red) */
-.threshold-inputs {
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
+/* 1. Toggle Switch (Ativar Notificações) */
+.toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #333;
 }
 
-.threshold-inputs input {
-  width: 80px;
-  display: inline-block;
+.toggle-row label {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--color-text-light);
 }
 
-.threshold-inputs span {
-  font-size: 0.9rem;
-  color: #555;
+/* Estilo básico de input type=checkbox para parecer um toggle */
+.toggle-row input[type="checkbox"] {
+    position: relative;
+    appearance: none;
+    width: 40px;
+    height: 20px;
+    border-radius: 10px;
+    background-color: #555;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
-/* LINKS DE SUPORTE */
-.settings-section button {
-  background: #f0f0f0;
-  border: 1px solid #ccc;
-  padding: 0.7rem 1rem;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-right: 0.5rem;
-  margin-top: 0.4rem;
-  font-size: 0.9rem;
+.toggle-row input[type="checkbox"]::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: white;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.2s;
 }
 
-.settings-section button:hover {
-  background: #e5e5e5;
+.toggle-row input[type="checkbox"]:checked {
+    background-color: var(--color-primary-action);
 }
 
-/* BOTÃO SALVAR */
-.settings-save-btn {
-  background: #3A7AFE;
-  color: white;
-  width: 100%;
-  padding: 1rem;
-  font-size: 1rem;
-  border-radius: 10px;
-  border: none;
-  margin-top: 0.5rem;
-  cursor: pointer;
+.toggle-row input[type="checkbox"]:checked::after {
+    transform: translateX(20px);
 }
 
-.settings-save-btn:hover {
-  opacity: 0.85;
+/* 2. Thresholds (Avisos de Validade) */
+.mini-title {
+    font-size: 16px;
+    color: var(--color-text-light);
+    margin-top: 25px;
+    margin-bottom: 10px;
+    font-weight: 600;
 }
 
-/* MOBILE */
-@media (max-width: 480px) {
-  .settings-container {
-    padding: 1rem;
-  }
+.threshold-row {
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+}
 
-  .settings-section {
-    padding: 1rem;
-  }
+.threshold-row > div {
+    flex: 1;
+    min-width: 80px;
+}
 
-  .settings-save-btn {
-    padding: 0.9rem;
-  }
+.threshold-row label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+/* Destaque das cores nos campos de threshold */
+.threshold-row div:nth-child(1) label { color: var(--status-green); }
+.threshold-row div:nth-child(2) label { color: var(--status-yellow); }
+.threshold-row div:nth-child(3) label { color: var(--status-red); }
+
+.form-input.small {
+    padding: 8px;
+    text-align: center;
+}
+
+/* 3. Plano */
+.plan-text {
+    font-size: 16px;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+}
+
+.plan-text strong {
+    color: var(--color-text-light);
+}
+
+/* 4. Botões de Suporte */
+.support-btn {
+    width: 100%;
+    text-align: left;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    background-color: #2a2a2a;
+    color: var(--color-text-light);
+    border: 1px solid #444;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.support-btn:hover {
+    background-color: #333;
+    border-color: var(--color-primary-action);
+}
+
+/* 5. Botão Salvar Principal */
+.save-btn {
+    width: 100%;
+    padding: 15px;
+    margin-top: 30px;
+    background-color: var(--color-primary-action);
+    color: var(--color-text-light);
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.save-btn:hover {
+    background-color: #0056b3;
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
 }

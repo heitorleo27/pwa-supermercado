@@ -1,100 +1,126 @@
-/* CONTAINER GERAL */
+/* Variáveis de Cores */
+:root {
+    --color-background: #121212;
+    --color-surface: #1e1e1e;
+    --color-text-light: #ffffff;
+    --color-text-secondary: #aaaaaa;
+    --color-primary-action: #007bff;
+    --color-card-hover: #2a2a2a;
+    --color-input-border: #333;
+}
+
 .store-selection-container {
-  min-height: 100vh;
-  padding: 2rem 1.5rem;
-  background: #f5f5f5;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 30px 20px;
+    background-color: var(--color-background);
+    color: var(--color-text-light);
+    text-align: center;
 }
 
-/* TÍTULO */
 .store-selection-container h2 {
-  font-size: 1.7rem;
-  font-weight: 600;
-  color: #222;
-  margin-bottom: 1.5rem;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: var(--color-text-light);
 }
 
-/* LISTA DE LOJAS */
+/* 1. Lista de Lojas */
 .lojas-lista {
-  width: 100%;
-  max-width: 420px;
-  list-style: none;
-  padding: 0;
-  margin: 0 0 2rem 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    max-width: 400px;
 }
 
-.lojas-lista li {
-  background: white;
-  padding: 1rem 1.2rem;
-  border-radius: 10px;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  font-size: 1rem;
-  color: #333;
-  display: flex;
-  justify-content: space-between;
-  transition: transform 0.1s, background 0.15s;
+.loja-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 20px;
+    margin-bottom: 12px;
+    background-color: var(--color-surface);
+    border: 1px solid #333;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
-.lojas-lista li:hover {
-  background: #e9eefc;
-  transform: translateY(-2px);
+.loja-item:hover {
+    background-color: var(--color-card-hover);
+    border-color: var(--color-primary-action);
 }
 
-/* FORM NOVA LOJA */
+.loja-nome {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-text-light);
+}
+
+.loja-cidade {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--color-text-secondary);
+    margin-left: 8px;
+}
+
+.nenhuma-loja {
+    color: var(--color-text-secondary);
+    font-style: italic;
+    margin-top: 20px;
+}
+
+/* 2. Formulário de Criação */
 .criar-loja-form {
-  width: 100%;
-  max-width: 420px;
-  background: white;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+    width: 100%;
+    max-width: 400px;
+    padding-top: 25px;
+    margin-top: 25px;
+    border-top: 1px solid #333;
 }
 
 .criar-loja-form input {
-  width: 100%;
-  padding: 0.9rem;
-  border: 1px solid #dcdcdc;
-  border-radius: 8px;
-  font-size: 1rem;
-  outline: none;
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    background-color: #2a2a2a;
+    border: 1px solid var(--color-input-border);
+    border-radius: 6px;
+    color: var(--color-text-light);
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
 }
 
 .criar-loja-form input:focus {
-  border-color: #3A7AFE;
+    outline: none;
+    border-color: var(--color-primary-action);
 }
 
-/* BOTÃO ADICIONAR */
 .criar-loja-form button {
-  padding: 0.9rem;
-  background: #3A7AFE;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.2s;
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    background-color: var(--color-primary-action);
+    color: var(--color-text-light);
+    border: none;
+    border-radius: 6px;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
 .criar-loja-form button:hover {
-  background: #2e63d4;
+    background-color: #0056b3;
 }
 
-/* MOBILE */
-@media (max-width: 480px) {
-  .store-selection-container {
-    padding: 1.5rem 1rem;
-  }
-  
-  .criar-loja-form {
-    padding: 1.2rem;
-  }
+/* 3. Loading (Se necessário) */
+.store-selection-container > p {
+    color: var(--color-text-secondary);
+    margin-top: 20px;
 }
