@@ -3,11 +3,10 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 import './index.css'
 import { registerSW } from 'virtual:pwa-register'
+import { HashRouter } from 'react-router-dom' 
 
-// Registrar o service worker com callbacks úteis
 const updateSW = registerSW({
   onNeedRefresh() {
-    // aqui podemos sugerir ao usuário recarregar para atualizar
     console.log('Nova versão disponível — chame update quando quiser.')
   },
   onOfflineReady() {
@@ -15,9 +14,11 @@ const updateSW = registerSW({
   }
 })
 
-// Render da aplicação
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <App updateSW={updateSW} />
+    {/* APLICAÇÃO DA CORREÇÃO: Envolve o componente App com HashRouter */}
+    <HashRouter>
+      <App updateSW={updateSW} />
+    </HashRouter>
   </React.StrictMode>
 )
