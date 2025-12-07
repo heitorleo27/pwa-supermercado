@@ -1,0 +1,22 @@
+{
+  "short_name": "ShelfScan",
+  "name": "ShelfScan - Controle de Estoque",
+  "description": "Controle simples e rápido de estoque e validade.",
+  "icons": [
+    {
+      "src": "/vite.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/vite.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#121212",
+  "background_color": "#121212",
+  "orientation": "portrait"
+}
